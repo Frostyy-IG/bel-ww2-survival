@@ -86,6 +86,7 @@ namespace Core
         static Random rand = new Random();
 
         static Enemy enemy = new Enemy(100, rand.Next(50, 91));
+        static Enemy animal = new Enemy(100, rand.Next(0, 0));
 
         static int health = 100;
         static int energy = 100;
@@ -101,6 +102,7 @@ namespace Core
 
         static bool inInventory = false;
         static bool inCombat = false;
+        static bool inShop = false;
 
 
         static void Main(string[] args)
@@ -114,7 +116,7 @@ namespace Core
             Console.Write("Behind Enemy Lines: WW2 Survival" + Environment.NewLine);
             Console.ResetColor();
 
-            while (health > 0 && inCombat == false)
+            while (health > 0 && inCombat == false && inShop == false)
             {
                 StatusMenu();
 
@@ -186,6 +188,7 @@ namespace Core
             }
         }
 
+        #region Menus
         static void StatusMenu()
         {
             Console.WriteLine("########################");
@@ -212,6 +215,30 @@ namespace Core
             Console.WriteLine("##############################");
         }
 
+        static void ShopMenu()
+        {
+            Console.WriteLine("##############################");
+            Console.WriteLine("What do you want to do?" + Environment.NewLine);
+            Console.WriteLine("1. Purchase some ammunition. Price: 10 marks / 5 bullets");
+            Console.WriteLine("2. Sell some ammunition. Price: 5 bullets / 5 marks");
+            Console.WriteLine("3. Purchase some food. Price: 15 marks / 1 meal");
+            Console.WriteLine("4. Purchase some water. Price: 15 marks / 1 drink");
+            Console.WriteLine("5. Sell some food. Price: 1 meal / 10 marks");
+            Console.WriteLine("6. Sell some water. Price: 1 drink / 10 marks");
+            Console.WriteLine("7. Continue moving.");
+            Console.WriteLine("##############################");
+        }
+
+        static void AnimalMenu()
+        {
+            Console.WriteLine("##############################");
+            Console.WriteLine("What do you want to do?" + Environment.NewLine);
+            Console.WriteLine("1. Attempt to fire at the animal.");
+            Console.WriteLine("2. Retreat.");
+            Console.WriteLine("##############################");
+        }
+        #endregion
+
         static bool HasEnoughEnergy(int requiredEnergy)
         {
             if (energy < requiredEnergy)
@@ -231,14 +258,18 @@ namespace Core
             Random rand = new Random();
             int eventChance = rand.Next(0, 101);
 
-            if (eventChance > 70)
+            if (eventChance > 75)
             {
                 Console.WriteLine("You encounter an enemy!" + Environment.NewLine);
                 Combat();
             }
-            else if (eventChance > 40)
+            else if (eventChance > 45)
             {
-                Console.WriteLine("You encounter a villager!" + Environment.NewLine);
+                Villager();
+            }
+            else if (eventChance > 20)
+            {
+                Animal();
             }
         }
 
@@ -269,7 +300,7 @@ namespace Core
             }
             else if (lootChance <= 6) // 30% chance of finding ammo
             {
-                int numAmmo = rand.Next(1, 6); // Generate a random number of ammo between 1 and 5
+                int numAmmo = rand.Next(1, 4); // Generate a random number of ammo between 1 and 5
                 ammo += numAmmo;
                 Console.WriteLine($"You find {numAmmo} bullets!");
 
@@ -581,10 +612,8 @@ namespace Core
 
             Console.WriteLine("You open fire on the enemy!" + Environment.NewLine);
 
-            while (health > 0 && inCombat)
+            while (health > 0 && inCombat && inShop == false)
             {
-                ammo -= 1;
-
                 Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
                 if (ammoItem != null && ammoItem.Quantity > 0)
                 {
@@ -604,11 +633,18 @@ namespace Core
                     Console.WriteLine("3. Use a bandage.");
                     Console.WriteLine("##############################");
 
-                    string? playerCombatAction = Console.ReadLine();
-
-                    switch (playerCombatAction)
+                    string? choice = Console.ReadLine();
+                    if (!int.TryParse(choice, out int menuChoice))
                     {
-                        case "1":
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.ResetColor();
+                        continue;
+                    }
+
+                    switch (menuChoice)
+                    {
+                        case 1:
                             Console.WriteLine("You attempt to take cover." + Environment.NewLine);
 
                             int enemyHitChance = rand.Next(0, 3);
@@ -636,7 +672,7 @@ namespace Core
                                 }
                             }
                             break;
-                        case "2":
+                        case 2:
                             Console.WriteLine("You attempt to retreat." + Environment.NewLine);
 
                             int retreatChance = rand.Next(0, 2);
@@ -668,7 +704,7 @@ namespace Core
                                 }
                             }
                             break;
-                        case "3":
+                        case 3:
                             Bandage();
 
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -707,14 +743,21 @@ namespace Core
                     {
                         CombatMenu();
 
-                        string? playerCombatAction = Console.ReadLine();
-
-                        switch (playerCombatAction)
+                        string? choice = Console.ReadLine();
+                        if (!int.TryParse(choice, out int menuChoice))
                         {
-                            case "1":
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine("Invalid choice. Please try again.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        switch (menuChoice)
+                        {
+                            case 1:
                                 Console.WriteLine("You open fire on the enemy!" + Environment.NewLine);
                                 break;
-                            case "2":
+                            case 2:
                                 Console.WriteLine("You attempt to take cover." + Environment.NewLine);
 
                                 int enemyHitChance = rand.Next(0, 3);
@@ -742,7 +785,7 @@ namespace Core
                                     }
                                 }
                                 break;
-                            case "3":
+                            case 3:
                                 Console.WriteLine("You attempt to retreat." + Environment.NewLine);
 
                                 int retreatChance = rand.Next(0, 2);
@@ -774,7 +817,7 @@ namespace Core
                                     }
                                 }
                                 break;
-                            case "4":
+                            case 4:
                                 Bandage();
 
                                 Console.ForegroundColor = ConsoleColor.Green;
@@ -814,14 +857,21 @@ namespace Core
                         {
                             CombatMenu();
 
-                            string? playerCombatAction = Console.ReadLine();
-
-                            switch (playerCombatAction)
+                            string? choice = Console.ReadLine();
+                            if (!int.TryParse(choice, out int menuChoice))
                             {
-                                case "1":
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                Console.WriteLine("Invalid choice. Please try again.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            switch (menuChoice)
+                            {
+                                case 1:
                                     Console.WriteLine("You open fire on the enemy!" + Environment.NewLine);
                                     break;
-                                case "2":
+                                case 2:
                                     Console.WriteLine("You attempt to take cover." + Environment.NewLine);
 
                                     int enemyHitChance = rand.Next(0, 3);
@@ -849,7 +899,7 @@ namespace Core
                                         }
                                     }
                                     break;
-                                case "3":
+                                case 3:
                                     Console.WriteLine("You attempt to retreat." + Environment.NewLine);
 
                                     int retreatChance = rand.Next(0, 2);
@@ -881,7 +931,7 @@ namespace Core
                                         }
                                     }
                                     break;
-                                case "4":
+                                case 4:
                                     Bandage();
 
                                     Console.ForegroundColor = ConsoleColor.Green;
@@ -892,11 +942,400 @@ namespace Core
                                     utils.WriteColor("Invalid input.", ConsoleColor.Red, Environment.NewLine);
                                     break;
                             }
-                        }                     
+                        }
                     }
                 }
             }
         }
+
+        static void Villager()
+        {
+            inShop = true;
+
+            Console.WriteLine("You encounter a villager!" + Environment.NewLine);
+            Console.WriteLine("He seems to have a few items to trade." + Environment.NewLine);
+
+            while (health > 0 && inShop && inCombat == false)
+            {
+                ShopMenu();
+
+                string? choice = Console.ReadLine();
+                if (!int.TryParse(choice, out int menuChoice))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                switch (menuChoice)
+                {
+                    case 1:
+                        if (HasEnoughEnergy(1))
+                        {
+                            BuyAmmo();
+                        }
+                        break;
+                    case 2:
+                        if (HasEnoughEnergy(1))
+                        {
+                            SellAmmo();
+                        }
+                        break;
+                    case 3:
+                        if (HasEnoughEnergy(1))
+                        {
+                            BuyFood();
+                        }
+                        break;
+                    case 4:
+                        if (HasEnoughEnergy(1))
+                        {
+                            BuyWater();
+                        }
+                        break;
+                    case 5:
+                        if (HasEnoughEnergy(1))
+                        {
+                            SellFood();
+                        }
+                        break;
+                    case 6:
+                        if (HasEnoughEnergy(1))
+                        {
+                            SellWater();
+                        }
+                        break;
+                    case 7:
+                        if (HasEnoughEnergy(1))
+                        {
+                            inShop = false;
+                            break;
+                        }
+                        break;
+                    case 9:
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.ResetColor();
+                        break;
+                }
+            }
+        }
+
+        static void Animal()
+        {
+                inCombat = true;
+
+                Console.WriteLine("You encounter an animal!" + Environment.NewLine);
+                Console.WriteLine("You open fire on the animal!" + Environment.NewLine);
+
+            while (health > 0 && inShop == false && inCombat == true)
+            {
+                    Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
+                    if (ammoItem != null && ammoItem.Quantity > 0)
+                    {
+                        ammoItem.Quantity -= 1;
+                        ammo -= 1;
+                    }
+
+                    utils.SmallArms();
+                    AnimalMenu();
+
+                    if (ammo <= 0)
+                    {
+                        Console.WriteLine("You have no ammunition left.");
+
+                        Console.WriteLine("What do you want to do?" + Environment.NewLine);
+                        Console.WriteLine("1. Retreat.");
+                        Console.WriteLine("##############################");
+
+                        string? choice = Console.ReadLine();
+                        if (!int.TryParse(choice, out int menuChoice))
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine("Invalid choice. Please try again.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        switch (menuChoice)
+                        {
+                            case 1:
+                                if (HasEnoughEnergy(1))
+                                {
+                                    Console.WriteLine("You retreat." + Environment.NewLine);
+                                    utils.Move();
+                                    inCombat = false;
+                                }
+                                break;
+                            default:
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                Console.WriteLine("Invalid choice. Please try again.");
+                                Console.ResetColor();
+                                break;
+                        }
+                    }
+                else
+                {
+                        int dealDamage = rand.Next(30, 100);
+                        int hitChance = rand.Next(0, 2);
+
+                    if (hitChance == 1)
+                    {
+                        animal.health -= dealDamage;
+
+                        Console.Write("You manage to hit the animal and deal ");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(dealDamage);
+                        Console.ResetColor();
+                        Console.Write(" damage. ");
+                        Console.Write(Environment.NewLine);
+
+                        if (animal.health <= 0)
+                        {
+                            inCombat = false;
+
+                            Console.Write("You successfully kill the animal!" + Environment.NewLine);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("You gain 2 meat." + Environment.NewLine);
+                            Console.ResetColor();
+
+                            Item? foodItem = inventory.Find(item => item.Name == "Food");
+                            if (foodItem != null && foodItem.Quantity >= 0)
+                            {
+                                foodItem.Quantity += 2;
+                                foodCount += 2;
+                            }
+                            else
+                            {
+                                inventory.Add(new Item("Food", 2));
+                            }
+                        }
+                        else
+                        {
+                            string? choice = Console.ReadLine();
+                            if (!int.TryParse(choice, out int menuChoice))
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                Console.WriteLine("Invalid choice. Please try again.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            switch (menuChoice)
+                            {
+                                case 1:
+                                    if (HasEnoughEnergy(1))
+                                    {
+                                        Console.WriteLine("You open fire on the animal!" + Environment.NewLine);
+
+                                        int runChance = rand.Next(0, 3);
+                                        if (runChance == 0)
+                                        {
+                                            Console.WriteLine("The animal runs away!" + Environment.NewLine);
+                                            inCombat = false;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                case 2:
+                                    if (HasEnoughEnergy(1))
+                                    {
+                                        Console.WriteLine("You retreat." + Environment.NewLine);
+                                        inCombat = false;
+                                    }
+                                    break;
+                                default:
+                                    utils.WriteColor("Invalid input.", ConsoleColor.Red, Environment.NewLine);
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("You fire at the animal but miss!");
+                    }
+                }
+            }
+        }
+
+        #region Buy/Sell
+        static void BuyAmmo()
+        {
+            Item? marksItem = inventory.Find(item => item.Name == "Marks");
+            if (marksItem != null && marksItem.Quantity >= 10)
+            {
+                marksItem.Quantity -= 10;
+                marks -= 10;
+
+                Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
+                if (ammoItem != null)
+                {
+                    ammoItem.Quantity += 5;
+                    ammo += 5;
+                }
+                else
+                {
+                    inventory.Add(new Item("Ammunition", 5));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You purchase some ammunition." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough money." + Environment.NewLine);
+            }
+        }
+
+        static void SellAmmo()
+        {
+            Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
+            if (ammoItem != null && ammoItem.Quantity >= 5)
+            {
+                ammoItem.Quantity -= 5;
+                ammo -= 5;
+
+                Item? marksItem = inventory.Find(item => item.Name == "Marks");
+                if (marksItem != null)
+                {
+                    marksItem.Quantity += 5;
+                    marks += 5;
+                }
+                else
+                {
+                    inventory.Add(new Item("Marks", 5));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You sell some ammunition." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough ammunition." + Environment.NewLine);
+            }
+        }
+
+        static void BuyFood()
+        {
+            Item? marksItem = inventory.Find(item => item.Name == "Marks");
+            if (marksItem != null && marksItem.Quantity >= 15)
+            {
+                marksItem.Quantity -= 15;
+                marks -= 15;
+
+                Item? foodItem = inventory.Find(item => item.Name == "Food");
+                if (foodItem != null)
+                {
+                    foodItem.Quantity += 1;
+                    foodCount += 1;
+                }
+                else
+                {
+                    inventory.Add(new Item("Food", 1));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You purchase some food." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough money." + Environment.NewLine);
+            }
+        }
+
+        static void BuyWater()
+        {
+            Item? marksItem = inventory.Find(item => item.Name == "Marks");
+            if (marksItem != null && marksItem.Quantity >= 15)
+            {
+                marksItem.Quantity -= 15;
+                marks -= 15;
+
+                Item? waterItem = inventory.Find(item => item.Name == "Water");
+                if (waterItem != null)
+                {
+                    waterItem.Quantity += 1;
+                    waterCount += 1;
+                }
+                else
+                {
+                    inventory.Add(new Item("Water", 1));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You purchase some water." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough money." + Environment.NewLine);
+            }
+        }
+
+        static void SellFood()
+        {
+            Item? foodItem = inventory.Find(item => item.Name == "Food");
+            if (foodItem != null && foodItem.Quantity >= 1)
+            {
+                foodItem.Quantity -= 1;
+                foodCount -= 1;
+
+                Item? marksItem = inventory.Find(item => item.Name == "Marks");
+                if (marksItem != null)
+                {
+                    marksItem.Quantity += 10;
+                    marks += 10;
+                }
+                else
+                {
+                    inventory.Add(new Item("Marks", 10));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You sell some food." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough food." + Environment.NewLine);
+            }
+        }
+
+        static void SellWater()
+        {
+            Item? waterItem = inventory.Find(item => item.Name == "Water");
+            if (waterItem != null && waterItem.Quantity >= 1)
+            {
+                waterItem.Quantity -= 1;
+                waterCount -= 1;
+
+                Item? marksItem = inventory.Find(item => item.Name == "Marks");
+                if (marksItem != null)
+                {
+                    marksItem.Quantity += 10;
+                    marks += 10;
+                }
+                else
+                {
+                    inventory.Add(new Item("Marks", 10));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You sell some water." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough water." + Environment.NewLine);
+            }
+        }
+        #endregion
 
         static void GameOver()
         {

@@ -111,7 +111,7 @@ namespace Core
             inventory.Add(new Item("Bandages", 1));
             inventory.Add(new Item("Marks", 5));
 
-            Console.Write("Welcome to the ");
+            Console.Write("Welcome to ");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write("Behind Enemy Lines: WW2 Survival" + Environment.NewLine);
             Console.ResetColor();

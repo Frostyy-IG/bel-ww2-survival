@@ -10,16 +10,16 @@
         #region Sounds
         //SmallArms sounds
         List<string> smallArms = new List<string> {
-            @"C:\Users\Frostyy\source\repos\WW2SurvivalGame\Sounds\SmallArmsFire0.wav",
-            @"C:\Users\Frostyy\source\repos\WW2SurvivalGame\Sounds\SmallArmsFire1.wav",
-            @"C:\Users\Frostyy\source\repos\WW2SurvivalGame\Sounds\SmallArmsFire2.wav",
+            @"Sounds\SmallArmsFire0.wav",
+            @"Sounds\SmallArmsFire1.wav",
+            @"Sounds\SmallArmsFire2.wav",
         };
 
         //Move sounds
         List<string> move = new List<string> {
-            @"C:\Users\Frostyy\source\repos\WW2SurvivalGame\Sounds\Move0.wav",
-            @"C:\Users\Frostyy\source\repos\WW2SurvivalGame\Sounds\Move1.wav",
-            @"C:\Users\Frostyy\source\repos\WW2SurvivalGame\Sounds\Move2.wav",
+            @"Sounds\Move0.wav",
+            @"Sounds\Move1.wav",
+            @"Sounds\Move2.wav",
         };
         #endregion
 

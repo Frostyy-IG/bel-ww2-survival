@@ -1,4 +1,5 @@
 <h1>Behind Enemy Lines: WW2 Survival</h1>
+<p>Copyright (c) 2023 Isolation Games</p>
 <p>Behind Enemy Lines: WW2 Survival is a text-based adventure game set during World War II. You play as a soldier who is stranded behind enemy lines and must make your way back to safety while avoiding enemy soldiers and overcoming various obstacles.</p>
 <h2>Getting Started</h2>
 <p>To play the game, simply run the executable file provided in the game's directory. You will be prompted to make choices and input commands to progress through the game.</p>

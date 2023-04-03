@@ -107,6 +107,8 @@ namespace Core
 
         static void Main(string[] args)
         {
+            Random rand = new Random();
+
             inventory.Add(new Item("Ammunition", 10));
             inventory.Add(new Item("Bandages", 1));
             inventory.Add(new Item("Marks", 5));
@@ -258,16 +260,16 @@ namespace Core
             Random rand = new Random();
             int eventChance = rand.Next(0, 101);
 
-            if (eventChance > 75)
+            if (eventChance > 85)
             {
                 Console.WriteLine("You encounter an enemy!" + Environment.NewLine);
                 Combat();
             }
-            else if (eventChance > 45)
+            else if (eventChance > 90)
             {
                 Villager();
             }
-            else if (eventChance > 20)
+            else if (eventChance > 65)
             {
                 Animal();
             }
@@ -300,7 +302,7 @@ namespace Core
             }
             else if (lootChance <= 6) // 30% chance of finding ammo
             {
-                int numAmmo = rand.Next(1, 4); // Generate a random number of ammo between 1 and 5
+                int numAmmo = rand.Next(1, 4); // Generate a random number of ammo between 1 and 3
                 ammo += numAmmo;
                 Console.WriteLine($"You find {numAmmo} bullets!");
 
@@ -363,7 +365,7 @@ namespace Core
             Random rand = new Random();
 
             // Random foot chance
-            int result = rand.Next(1, 6);
+            int result = rand.Next(1, 4);
 
             // Random message
             int index = rand.Next(messages.Count);
@@ -412,7 +414,7 @@ namespace Core
             Random rand = new Random();
 
             // Random foot chance
-            int result = rand.Next(1, 6);
+            int result = rand.Next(1, 4);
 
             // Random message
             int index = rand.Next(messages.Count);
@@ -1115,193 +1117,193 @@ namespace Core
                 }
             }
         }
-    
+
         #region Buy/Sell
-    static void BuyAmmo()
-    {
-        Item? marksItem = inventory.Find(item => item.Name == "Marks");
-        if (marksItem != null && marksItem.Quantity >= 10)
+        static void BuyAmmo()
         {
-            marksItem.Quantity -= 10;
-            marks -= 10;
+            Item? marksItem = inventory.Find(item => item.Name == "Marks");
+            if (marksItem != null && marksItem.Quantity >= 10)
+            {
+                marksItem.Quantity -= 10;
+                marks -= 10;
 
+                Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
+                if (ammoItem != null)
+                {
+                    ammoItem.Quantity += 5;
+                    ammo += 5;
+                }
+                else
+                {
+                    inventory.Add(new Item("Ammunition", 5));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You purchase some ammunition." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough money." + Environment.NewLine);
+            }
+        }
+
+        static void SellAmmo()
+        {
             Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
-            if (ammoItem != null)
+            if (ammoItem != null && ammoItem.Quantity >= 5)
             {
-                ammoItem.Quantity += 5;
-                ammo += 5;
+                ammoItem.Quantity -= 5;
+                ammo -= 5;
+
+                Item? marksItem = inventory.Find(item => item.Name == "Marks");
+                if (marksItem != null)
+                {
+                    marksItem.Quantity += 5;
+                    marks += 5;
+                }
+                else
+                {
+                    inventory.Add(new Item("Marks", 5));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You sell some ammunition." + Environment.NewLine);
+                Console.ResetColor();
             }
             else
             {
-                inventory.Add(new Item("Ammunition", 5));
+                Console.WriteLine("You do not have enough ammunition." + Environment.NewLine);
             }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You purchase some ammunition." + Environment.NewLine);
-            Console.ResetColor();
         }
-        else
-        {
-            Console.WriteLine("You do not have enough money." + Environment.NewLine);
-        }
-    }
 
-    static void SellAmmo()
-    {
-        Item? ammoItem = inventory.Find(item => item.Name == "Ammunition");
-        if (ammoItem != null && ammoItem.Quantity >= 5)
+        static void BuyFood()
         {
-            ammoItem.Quantity -= 5;
-            ammo -= 5;
-
             Item? marksItem = inventory.Find(item => item.Name == "Marks");
-            if (marksItem != null)
+            if (marksItem != null && marksItem.Quantity >= 15)
             {
-                marksItem.Quantity += 5;
-                marks += 5;
+                marksItem.Quantity -= 15;
+                marks -= 15;
+
+                Item? foodItem = inventory.Find(item => item.Name == "Food");
+                if (foodItem != null)
+                {
+                    foodItem.Quantity += 1;
+                    foodCount += 1;
+                }
+                else
+                {
+                    inventory.Add(new Item("Food", 1));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You purchase some food." + Environment.NewLine);
+                Console.ResetColor();
             }
             else
             {
-                inventory.Add(new Item("Marks", 5));
+                Console.WriteLine("You do not have enough money." + Environment.NewLine);
             }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You sell some ammunition." + Environment.NewLine);
-            Console.ResetColor();
         }
-        else
+
+        static void BuyWater()
         {
-            Console.WriteLine("You do not have enough ammunition." + Environment.NewLine);
+            Item? marksItem = inventory.Find(item => item.Name == "Marks");
+            if (marksItem != null && marksItem.Quantity >= 15)
+            {
+                marksItem.Quantity -= 15;
+                marks -= 15;
+
+                Item? waterItem = inventory.Find(item => item.Name == "Water");
+                if (waterItem != null)
+                {
+                    waterItem.Quantity += 1;
+                    waterCount += 1;
+                }
+                else
+                {
+                    inventory.Add(new Item("Water", 1));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You purchase some water." + Environment.NewLine);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("You do not have enough money." + Environment.NewLine);
+            }
         }
-    }
 
-    static void BuyFood()
-    {
-        Item? marksItem = inventory.Find(item => item.Name == "Marks");
-        if (marksItem != null && marksItem.Quantity >= 15)
+        static void SellFood()
         {
-            marksItem.Quantity -= 15;
-            marks -= 15;
-
             Item? foodItem = inventory.Find(item => item.Name == "Food");
-            if (foodItem != null)
+            if (foodItem != null && foodItem.Quantity >= 1)
             {
-                foodItem.Quantity += 1;
-                foodCount += 1;
+                foodItem.Quantity -= 1;
+                foodCount -= 1;
+
+                Item? marksItem = inventory.Find(item => item.Name == "Marks");
+                if (marksItem != null)
+                {
+                    marksItem.Quantity += 10;
+                    marks += 10;
+                }
+                else
+                {
+                    inventory.Add(new Item("Marks", 10));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You sell some food." + Environment.NewLine);
+                Console.ResetColor();
             }
             else
             {
-                inventory.Add(new Item("Food", 1));
+                Console.WriteLine("You do not have enough food." + Environment.NewLine);
             }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You purchase some food." + Environment.NewLine);
-            Console.ResetColor();
         }
-        else
-        {
-            Console.WriteLine("You do not have enough money." + Environment.NewLine);
-        }
-    }
 
-    static void BuyWater()
-    {
-        Item? marksItem = inventory.Find(item => item.Name == "Marks");
-        if (marksItem != null && marksItem.Quantity >= 15)
+        static void SellWater()
         {
-            marksItem.Quantity -= 15;
-            marks -= 15;
-
             Item? waterItem = inventory.Find(item => item.Name == "Water");
-            if (waterItem != null)
+            if (waterItem != null && waterItem.Quantity >= 1)
             {
-                waterItem.Quantity += 1;
-                waterCount += 1;
+                waterItem.Quantity -= 1;
+                waterCount -= 1;
+
+                Item? marksItem = inventory.Find(item => item.Name == "Marks");
+                if (marksItem != null)
+                {
+                    marksItem.Quantity += 10;
+                    marks += 10;
+                }
+                else
+                {
+                    inventory.Add(new Item("Marks", 10));
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You sell some water." + Environment.NewLine);
+                Console.ResetColor();
             }
             else
             {
-                inventory.Add(new Item("Water", 1));
+                Console.WriteLine("You do not have enough water." + Environment.NewLine);
             }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You purchase some water." + Environment.NewLine);
-            Console.ResetColor();
         }
-        else
-        {
-            Console.WriteLine("You do not have enough money." + Environment.NewLine);
-        }
-    }
-
-    static void SellFood()
-    {
-        Item? foodItem = inventory.Find(item => item.Name == "Food");
-        if (foodItem != null && foodItem.Quantity >= 1)
-        {
-            foodItem.Quantity -= 1;
-            foodCount -= 1;
-
-            Item? marksItem = inventory.Find(item => item.Name == "Marks");
-            if (marksItem != null)
-            {
-                marksItem.Quantity += 10;
-                marks += 10;
-            }
-            else
-            {
-                inventory.Add(new Item("Marks", 10));
-            }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You sell some food." + Environment.NewLine);
-            Console.ResetColor();
-        }
-        else
-        {
-            Console.WriteLine("You do not have enough food." + Environment.NewLine);
-        }
-    }
-
-    static void SellWater()
-    {
-        Item? waterItem = inventory.Find(item => item.Name == "Water");
-        if (waterItem != null && waterItem.Quantity >= 1)
-        {
-            waterItem.Quantity -= 1;
-            waterCount -= 1;
-
-            Item? marksItem = inventory.Find(item => item.Name == "Marks");
-            if (marksItem != null)
-            {
-                marksItem.Quantity += 10;
-                marks += 10;
-            }
-            else
-            {
-                inventory.Add(new Item("Marks", 10));
-            }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You sell some water." + Environment.NewLine);
-            Console.ResetColor();
-        }
-        else
-        {
-            Console.WriteLine("You do not have enough water." + Environment.NewLine);
-        }
-    }
-    #endregion
+        #endregion
 
         static void GameOver()
-    {
-        if (health < 0)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You die from major injuries.");
-            Console.ResetColor();
-            Environment.Exit(2);
+            if (health < 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You die from major injuries.");
+                Console.ResetColor();
+                Environment.Exit(2);
+            }
         }
-    }
     }
     public class Item
     {
@@ -1312,6 +1314,21 @@ namespace Core
         {
             Name = name;
             Quantity = quantity;
+        }
+    }
+
+    // The stuff bellow has no use currently
+    public class Gun
+    {
+        public string Name { get; set; }
+        public string AmmoType { get; set; }
+        public int Damage { get; set; }
+
+        public Gun(string name, string ammoType, int damage)
+        {
+            Name = name;
+            AmmoType = ammoType;
+            Damage = damage;
         }
     }
 }
